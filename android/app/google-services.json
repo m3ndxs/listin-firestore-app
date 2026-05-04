@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "530034559702",
+    "project_id": "flutter-listin-alura",
+    "storage_bucket": "flutter-listin-alura.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:530034559702:android:875a2a5d83516f72b29777",
+        "android_client_info": {
+          "package_name": "com.example.listin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAM3aSY70R8Og4Hc0jRvPQyfj81tsWKaR8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
