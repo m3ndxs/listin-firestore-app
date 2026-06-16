@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:listin/firestore/helpers/firestore_analytics.dart';
 import 'package:listin/firestore/models/listin.dart';
+import 'package:listin/firestore_produtos/presentation/produto_screen.dart';
 import 'package:uuid/uuid.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -69,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     child: ListTile(
                       onTap: () {
-                        print("Clicou Aqui");
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ProdutoScreen(listin: model),));
                       },
                       onLongPress: () {
                         showFormModal(model: model);
