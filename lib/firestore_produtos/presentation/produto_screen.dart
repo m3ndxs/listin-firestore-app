@@ -44,7 +44,6 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.listin.name),
-        backgroundColor: Colors.deepPurple[200],
         actions: [
           PopupMenuButton(
             itemBuilder: (context) {
@@ -93,8 +92,8 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
             Container(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: Column(
-                children: const [
-                  Text("R\$${0}", style: TextStyle(fontSize: 42)),
+                children: [
+                  Text("R\$${calcularPrecoPegos().toStringAsFixed(2)}", style: TextStyle(fontSize: 42)),
                   Text(
                     "total previsto para essa compra",
                     style: TextStyle(fontStyle: FontStyle.italic),
@@ -119,6 +118,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                   isComprado: false,
                   showModal: showFormModal,
                   iconClick: alternarComprado,
+                  deleteClick: removerProduto,
                 );
               }),
             ),
@@ -139,6 +139,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                   isComprado: true,
                   showModal: showFormModal,
                   iconClick: alternarComprado,
+                  deleteClick: removerProduto,
                 );
               }),
             ),
@@ -350,6 +351,15 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
         });
   }
 
+  dynamic removerProduto(Produto produto) async {
+    await firestore
+        .collection("listins")
+        .doc(widget.listin.id)
+        .collection("produtos")
+        .doc(produto.id)
+        .delete();
+  }
+
   dynamic verificarAlteracoes(QuerySnapshot<Map<String, dynamic>> snapshot) {
     if (snapshot.docChanges.length == 1) {
       for (var change in snapshot.docChanges) {
@@ -381,5 +391,17 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     }
+  }
+  
+  double calcularPrecoPegos() {
+    double total = 0;
+    
+    for (Produto produto in listaProdutosPegos) { 
+      if (produto.amount != null && produto.price != null) {
+        total += (produto.amount! * produto.price!);
+      }
+    }
+
+    return total;
   }
 }

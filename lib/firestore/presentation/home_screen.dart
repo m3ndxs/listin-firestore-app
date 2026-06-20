@@ -32,7 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
           "Listin - Feira Colaborativa",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Theme.of(context).primaryColor,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -77,7 +76,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                       leading: const Icon(Icons.list_alt_rounded),
                       title: Text(model.name),
-                      subtitle: Text(model.id),
+                      // 
+                      
                     ),
                   );
                 }),
