@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:listin/firestore_produtos/helpers/enum_order.dart';
@@ -23,10 +25,18 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
   OrderProduct order = OrderProduct.name;
   bool isDescending = false;
 
+  late StreamSubscription listener;
+
   @override
   void initState() {
-    refresh();
+    setupListeners();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    listener.cancel();
+    super.dispose();
   }
 
   @override
@@ -259,7 +269,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                           .set(produto.toMap());
 
                       // Atualizar a lista
-                      refresh();
+                      // refresh();
 
                       // Fechar o Modal
                       Navigator.pop(context);
@@ -275,16 +285,18 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
     );
   }
 
-  dynamic refresh() async {
+  dynamic refresh({QuerySnapshot<Map<String, dynamic>>? snapshot}) async {
     List<Produto> temp = [];
 
-    QuerySnapshot<Map<String, dynamic>> snapshot = await firestore
+    snapshot ??= await firestore
         .collection("listins")
         .doc(widget.listin.id)
         .collection("produtos")
         // .where("isComprado", isEqualTo: isComprado)
         .orderBy(order.name, descending: isDescending)
         .get();
+
+    verificarAlteracoes(snapshot);
 
     for (var doc in snapshot.docs) {
       Produto produto = Produto.fromMap(doc.data());
@@ -323,6 +335,51 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
         .doc(produto.id)
         .update({"isComprado": produto.isComprado});
 
-    refresh();
+    // refresh();
+  }
+
+  dynamic setupListeners() {
+    listener = firestore
+        .collection("listins")
+        .doc(widget.listin.id)
+        .collection("produtos")
+        .orderBy(order.name, descending: isDescending)
+        .snapshots()
+        .listen((snapshot) {
+          refresh(snapshot: snapshot);
+        });
+  }
+
+  dynamic verificarAlteracoes(QuerySnapshot<Map<String, dynamic>> snapshot) {
+    if (snapshot.docChanges.length == 1) {
+      for (var change in snapshot.docChanges) {
+        String tipoAlteracao = "";
+        Color color = Colors.green;
+
+        switch (change.type) {
+          case DocumentChangeType.added:
+            tipoAlteracao = "Novo Produto";
+            color = Colors.green;
+          case DocumentChangeType.modified:
+            tipoAlteracao = "Produto Modificado";
+            color = Colors.orange;
+          case DocumentChangeType.removed:
+            tipoAlteracao = "Produto Removido";
+            color = Colors.red;
+            break;
+        }
+
+        Produto produto = Produto.fromMap(change.doc.data()!);
+        final snackBar = SnackBar(
+          backgroundColor: color,
+          duration: const Duration(seconds: 5),
+          showCloseIcon: true,
+          closeIconColor: Colors.white70,
+          content: Text("$tipoAlteracao: ${produto.name}"),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    }
   }
 }
