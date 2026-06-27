@@ -19,7 +19,7 @@ class AuthService {
         case "wrong-password":
           return "Senha incorreta.";
         case "invalid-credential":
-          return  "Credenciais inválidas.";
+          return "Credenciais inválidas.";
       }
       return e.code;
     }
@@ -52,6 +52,15 @@ class AuthService {
       if (e.code == "user-not-found") {
         return "Email não cadastrado.";
       }
+    }
+    return null;
+  }
+
+  Future<String?> deslogar() async {
+    try {
+      await _firebaseAuth.signOut();
+    } on FirebaseAuthException catch (e) {
+      return e.code;
     }
     return null;
   }

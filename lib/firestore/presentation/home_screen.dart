@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:listin/authentication/services/auth_service.dart';
 import 'package:listin/firestore/helpers/firestore_analytics.dart';
 import 'package:listin/firestore/models/listin.dart';
 import 'package:listin/firestore_produtos/presentation/produto_screen.dart';
@@ -27,6 +28,19 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text("Sair"),
+              onTap: () {
+                AuthService().deslogar();
+              },
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         title: const Text(
           "Listin - Feira Colaborativa",
