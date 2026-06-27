@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:listin/core/my_colors.dart';
-import 'package:listin/firestore/presentation/home_screen.dart';
+import 'package:listin/authentication/screens/auth_screen.dart';
+import 'package:listin/_core/my_colors.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: false,
       ),
-      home: const HomeScreen(),
+      home: const AuthScreen(),
     );
   }
 }
