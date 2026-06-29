@@ -4,6 +4,7 @@ import 'package:listin/authentication/services/auth_service.dart';
 import 'package:listin/authentication/widgets/show_senha_confirmacao_dialog.dart';
 import 'package:listin/firestore/helpers/firestore_analytics.dart';
 import 'package:listin/firestore/models/listin.dart';
+import 'package:listin/firestore/services/listin_service.dart';
 import 'package:listin/firestore_produtos/presentation/produto_screen.dart';
 import 'package:uuid/uuid.dart';
 
@@ -16,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Listin> listListins = [];
+  ListinService listinService = ListinService();
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   FirestoreAnalytics analytics = FirestoreAnalytics();
 
@@ -40,12 +42,12 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.delete, color: Colors.red,),
+              leading: const Icon(Icons.delete, color: Colors.red),
               title: const Text("Remover conta"),
               onTap: () {
                 showSenhaConfirmacaoDialog(context: context, email: "");
-              }
-            )
+              },
+            ),
           ],
         ),
       ),
@@ -84,22 +86,27 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: Colors.red,
                       alignment: Alignment.centerRight,
                       padding: const EdgeInsets.only(right: 16),
-                      child: const Icon(Icons.delete, color: Colors.white,),
+                      child: const Icon(Icons.delete, color: Colors.white),
                     ),
                     onDismissed: (direction) {
                       remove(model);
                     },
                     child: ListTile(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ProdutoScreen(listin: model),));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProdutoScreen(listin: model),
+                          ),
+                        );
                       },
                       onLongPress: () {
                         showFormModal(model: model);
                       },
                       leading: const Icon(Icons.list_alt_rounded),
                       title: Text(model.name),
-                      // 
-                      
+
+                      //
                     ),
                   );
                 }),
@@ -186,23 +193,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   dynamic refresh() async {
-    List<Listin> temp = [];
-
-    QuerySnapshot<Map<String, dynamic>> snapshot = await firestore
-        .collection("listins")
-        .get();
-
-    for (var doc in snapshot.docs) {
-      temp.add(Listin.fromMap(doc.data()));
-    }
-
+    List<Listin> listaListins = await listinService.lerListins();
     setState(() {
-      listListins = temp;
+      listListins = listaListins;
     });
   }
 
-  void remove(Listin model) {
-    firestore.collection('listins').doc(model.id).delete();
+  void remove(Listin model) async {
+    await listinService.removerListin(listinId: model.id);
     refresh();
   }
 }

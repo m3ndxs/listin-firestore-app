@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import '../../model/produto.dart';
 
 class ListTileProduto extends StatelessWidget {
+  final String listinId;
   final Produto produto;
   final bool isComprado;
   final Function showModal;
   final Function iconClick;
-  final Function deleteClick;
+  final Function trailClick;
 
   const ListTileProduto({
     super.key,
+    required this.listinId,
     required this.produto,
     required this.isComprado,
     required this.showModal,
     required this.iconClick,
-    required this.deleteClick,
+    required this.trailClick,
   });
 
   @override
@@ -25,14 +27,14 @@ class ListTileProduto extends StatelessWidget {
       },
       leading: IconButton(
         onPressed: () {
-          iconClick(produto);
+          iconClick(produto: produto, listinId: listinId);
         },
         icon: Icon((isComprado) ? Icons.shopping_basket : Icons.check),
       ),
       trailing: IconButton(
-        onPressed: () {
-          deleteClick(produto);
-        },
+        onPressed: (() {
+          trailClick(produto);
+        }),
         icon: const Icon(Icons.delete, color: Colors.red),
       ),
       title: Text(
